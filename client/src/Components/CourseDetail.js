@@ -57,15 +57,6 @@ const CourseDetail = () => {
                         </Card>
                     </Col>
                 ))}
-                <Col>
-                    <Card bg='transparent' text='dark' className='h-100 border-0'>
-                        <Card.Body className='border-top-0 bg-transparent d-flex align-items-center justify-content-center'>
-                                <Link to='/create-new-course' className='stretched-link btn btn-primary btn-lg shadow-sm'>
-                                    <PlusCircleFill className="mb-1 me-1" /> Create New Course
-                                </Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
             </Row>
         </main>
     )

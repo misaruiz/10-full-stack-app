@@ -28,14 +28,23 @@ const Courses = () => {
     }, [data, navigate]);
 
     return (
-        <main className="container mt-5">
-            <h1 className="mb-4">Courses</h1>
-            <Row md={3} className='g-4'>
+        <main className="container">
+            <div className="p-5 mb-4 bg-white rounded-3 shadow" style={{
+                background: "url(/images/pexels-kyle-loftus-3379934.png)",
+                backgroundSize: "cover"
+                }}>
+                <div className="container-fluid">
+                    <h1 className="display-5 fw-bold text-white">Courses</h1>
+                    <p className="col-md-8 fs-4 text-white">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
+                    <button className="btn btn-warning btn-lg" type="button"><PlusCircleFill /> Create New Course</button>
+                </div>
+            </div>
+            <Row xs={1} md={2} lg={3} className='g-4'>
                 {courses.map((course) => (
                     <Col key={course.id}>
-                        <Card bg='white' text='dark' className='h-100 border-0 shadow-sm'>
+                        <Card bg='warning' text='dark' className='h-100 border-0 shadow'>
                             <Card.Header 
-                                className='bg-secondary text-white border-bottom-0 d-flex flex-row'>
+                                className='border-bottom-0 d-flex flex-row'>
                                 <div>
                                     Course
                                 </div>
@@ -46,26 +55,13 @@ const Courses = () => {
                             </Card.Header>
                             <Card.Body>
                                 <Card.Title>{course.title}</Card.Title>
-                            </Card.Body>
-                            <Card.Footer className='border-top-0 bg-transparent'>
                                 <Link 
                                     to={`/courses/${course.id}`}  
-                                    className='stretched-link'>
-                                    Details
-                                </Link>
-                            </Card.Footer>
+                                    className='stretched-link' />
+                            </Card.Body>
                         </Card>
                     </Col>
                 ))}
-                <Col>
-                    <Card bg='transparent' text='dark' className='h-100 border-0'>
-                        <Card.Body className='border-top-0 bg-transparent d-flex align-items-center justify-content-center'>
-                                <Link to='/create-new-course' className='stretched-link btn btn-primary btn-lg shadow-sm'>
-                                    <PlusCircleFill className="mb-1 me-1" /> Create New Course
-                                </Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
             </Row>
         </main>
     )
