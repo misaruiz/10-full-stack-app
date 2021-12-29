@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 //   import { Context } from "../Context";
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { CameraReelsFill } from "react-bootstrap-icons";
@@ -21,7 +21,7 @@ export default class Header extends React.PureComponent {
                             <span>Welcome, {authUser.name}!</span>
                             <Link to="/signout" className='btn'>Sign Out</Link>
                         </> : <>
-                            <Link to="/signin" className='btn'>Sign In</Link>
+                            <Link to="/signin" className='btn me-2'>Sign In</Link>
                             <Link to="/signup" className='btn btn-dark'>Sign Up</Link>
                         </>}
                     </Nav>

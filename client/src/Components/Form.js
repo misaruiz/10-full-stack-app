@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default (props) => {
+const Form = (props) => {
   const {
     cancel,
     errors,
@@ -25,8 +25,8 @@ export default (props) => {
       <form onSubmit={handleSubmit}>
         {elements()}
         <div className="pad-bottom">
-          <button className="button" type="submit">{submitButtonText}</button>
-          <button className="button button-secondary" onClick={handleCancel}>Cancel</button>
+          <button className="btn btn-warning me-2" type="submit">{submitButtonText}</button>
+          <button className="btn btn-light" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
     </div>
@@ -51,3 +51,5 @@ function ErrorsDisplay({ errors }) {
 
   return errorsDisplay;
 }
+
+export default Form;
