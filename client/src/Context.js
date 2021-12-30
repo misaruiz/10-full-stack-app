@@ -6,8 +6,8 @@ export const Context = React.createContext();
 
 export class Provider extends Component {
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.data = new Data();
     this.cookie = Cookies.get('authenticatedUser');
     this.state = {
@@ -15,9 +15,9 @@ export class Provider extends Component {
     };
   }
 
-  state = {
-    authenticatedUser: null
-  };
+  // state = {
+  //   authenticatedUser: null
+  // };
 
   render() {
     const { authenticatedUser } = this.state;

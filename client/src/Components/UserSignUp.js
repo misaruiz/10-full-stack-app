@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
 import Form from './Form';
 
 export default class UserSignUp extends Component {
+
   state = {
-    name: '',
     username: '',
     password: '',
     errors: [],
@@ -12,51 +13,69 @@ export default class UserSignUp extends Component {
 
   render() {
     const {
-      name,
       username,
       password,
       errors,
     } = this.state;
 
     return (
-      <div className="bounds">
-        <div className="grid-33 centered signin">
-          <h1>Sign Up</h1>
-          <Form 
-            cancel={this.cancel}
-            errors={errors}
-            submit={this.submit}
-            submitButtonText="Sign Up"
-            elements={() => (
-              <React.Fragment>
-                <input 
-                  id="name" 
-                  name="name" 
-                  type="text"
-                  value={name} 
-                  onChange={this.change} 
-                  placeholder="Name" />
-                <input 
-                  id="username" 
-                  name="username" 
-                  type="text"
-                  value={username} 
-                  onChange={this.change} 
-                  placeholder="User Name" />
-                <input 
-                  id="password" 
-                  name="password"
-                  type="password"
-                  value={password} 
-                  onChange={this.change} 
-                  placeholder="Password" />
-              </React.Fragment>
-            )} />
-          <p>
-            Already have a user account? <Link to="/signin">Click here</Link> to sign in!
-          </p>
-        </div>
-      </div>
+      <main className="container">
+          <Row xs={1} lg={3} className='justify-content-center'>
+            <Col className='shadow rounded p-5 bg-white'>
+              <h1 className='mb-3 fw-bold'>Sign Up</h1>
+              <Form 
+                cancel={this.cancel}
+                errors={errors}
+                submit={this.submit}
+                submitButtonText="Sign In"
+                elements={() => (
+                  <>
+                    <div className="mb-3">
+                      <label htmlFor="firstName" className="form-label">First Name</label>
+                      <input 
+                        id="firstName" 
+                        name="firstName" 
+                        type="text"
+                        onChange={this.change} 
+                        className="form-control" />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="lastName" className="form-label">Last Name</label>
+                      <input 
+                        id="lastName" 
+                        name="lastName" 
+                        type="text"
+                        onChange={this.change} 
+                        className="form-control" />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="username" className="form-label">User Name</label>
+                      <input 
+                        id="username" 
+                        name="username" 
+                        type="text"
+                        value={username} 
+                        onChange={this.change} 
+                        className="form-control" />
+                      </div>
+                    <div className="mb-3">
+                    <label htmlFor="password" className="form-label">Password</label>
+                      <input 
+                        id="password" 
+                        name="password"
+                        type="password"
+                        value={password} 
+                        onChange={this.change} 
+                        className="form-control" />                
+                    </div>
+                  </>
+                )} />
+              <p className='mt-4'>
+                Don't have a user account? <br /> <Link to="/signup">Click here</Link> to sign up!
+              </p>
+            </Col>
+          </Row>
+      </main>
     );
   }
 
@@ -73,37 +92,25 @@ export default class UserSignUp extends Component {
 
   submit = () => {
     const { context } = this.props;
-
-    const {
-      name,
-      username,
-      password,
-    } = this.state;
-
-    const user = {
-      name,
-      username,
-      password,
-    };
-
-    context.data.createUser(user)
-      .then( errors => {
-        if (errors.length) {
-          this.setState({ errors });
+    const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
+    const { username, password } = this.state;
+    context.actions.signIn(username, password)
+      .then( user => {
+        if (user === null) {
+          this.setState(() => {
+            return { errors: [ 'Sign-in was unsuccessful' ] };
+          })
         } else {
-          context.actions.signIn(username, password)
-            .then(() => {
-              this.props.history.push('/authenticated');
-            })
-        }
+          this.props.navigate(from);
+      }
       })
       .catch( err => {
         console.log(err);
-        this.props.history.push('/error');
-      });
+        this.props.navigate('/error');
+      })
   }
 
   cancel = () => {
-    this.props.history.push('/');
+    this.props.navigate('/');
   }
 }

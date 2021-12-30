@@ -6,7 +6,7 @@ import React, {
   import { Link, useNavigate } from "react-router-dom";
   import { Context } from "../Context";
   import { Card, Row, Col } from 'react-bootstrap';
-  import { ClockFill, PlusCircleFill } from 'react-bootstrap-icons';
+  import { ClockFill, PlusCircleFill, ImageAlt } from 'react-bootstrap-icons';
 
 
 const Courses = () => {
@@ -28,14 +28,19 @@ const Courses = () => {
     }, [data, navigate]);
 
     return (
-        <main className="container">
+        <main className="container pb-5">
+            {console.log(data, Context)}
             <div className="p-5 mb-4 bg-white rounded-3 shadow" style={{
-                background: "url(/images/pexels-kyle-loftus-3379934.png)",
-                backgroundSize: "cover"
+                background: "url(/images/ux-design-bkg.png)",
+                backgroundSize: "cover",
+                backgroundPosition: "center"
                 }}>
-                <div className="container-fluid">
-                    <h1 className="display-5 fw-bold text-white">Courses</h1>
-                    <p className="col-md-8 fs-4 text-white">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
+                <div className="container-fluid py-4">
+                    <h1 className="display-5 text-white mb-0 pb-3">
+                        <ImageAlt className="me-2 mb-4" />
+                        <span className="fw-bold">Golden Hill</span> UX Design Course
+                    </h1>
+                    <p className="col-md-8 fs-4 text-white pb-3">In this course, you'll learn various methods of iterating on a design idea, from wireframing to building a mockup to sharing interactive prototypes.</p>
                     <button className="btn btn-warning btn-lg" type="button"><PlusCircleFill /> Create New Course</button>
                 </div>
             </div>
@@ -54,7 +59,7 @@ const Courses = () => {
                                 </div>
                             </Card.Header>
                             <Card.Body>
-                                <Card.Title>{course.title}</Card.Title>
+                                <Card.Title className="fw-bold fs-4">{course.title}</Card.Title>
                                 <Link 
                                     to={`/courses/${course.id}`}  
                                     className='stretched-link' />

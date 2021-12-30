@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import Form from './Form';
 
@@ -17,12 +17,13 @@ export default class UserSignIn extends Component {
       password,
       errors,
     } = this.state;
+    console.log(this.state);
 
     return (
       <main className="container">
           <Row xs={1} lg={3} className='justify-content-center'>
             <Col className='shadow rounded p-5 bg-white'>
-              <h1 className='mb-3'>Sign In</h1>
+              <h1 className='mb-3 fw-bold'>Sign In</h1>
               <Form 
                 cancel={this.cancel}
                 errors={errors}
@@ -38,7 +39,6 @@ export default class UserSignIn extends Component {
                         type="text"
                         value={username} 
                         onChange={this.change} 
-                        placeholder="Enter User Name"
                         className="form-control" />
                       </div>
                     <div className="mb-3">
@@ -49,7 +49,6 @@ export default class UserSignIn extends Component {
                         type="password"
                         value={password} 
                         onChange={this.change} 
-                        placeholder="Enter Password"
                         className="form-control" />                
                     </div>
                   </>
@@ -76,20 +75,25 @@ export default class UserSignIn extends Component {
 
   submit = () => {
     const { context } = this.props;
+    console.log(this.props);
     const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
     const { username, password } = this.state;
+
     context.actions.signIn(username, password)
       .then( user => {
         if (user === null) {
           this.setState(() => {
             return { errors: [ 'Sign-in was unsuccessful' ] };
           })
-        } else {
-          this.props.navigate(from);
+        } 
+        else {
+          this.props.history.push(from);
+          // this.props.history.push('/');
+          // navigate('/');
       }
       })
-      .catch( err => {
-        console.log(err);
+      .catch( error => {
+        console.log(error);
         this.props.navigate('/error');
       })
   }
