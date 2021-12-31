@@ -32,7 +32,7 @@ function App() {
       <HeaderWithContext />
       <Routes>
           <Route path="/" element={<CoursesWithContext />} />
-          <Route path="/courses/1" element={<CourseDetailWithContext />} />
+          <Route path="/courses/:id" element={<CourseDetailWithContext />} />
           <Route path="/courses/create" element={<CreateCourseWithContext />} />
           <Route path="/authenticated" element={
             <Consumer>

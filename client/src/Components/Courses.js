@@ -29,7 +29,6 @@ const Courses = () => {
 
     return (
         <main className="container pb-5">
-            {console.log(data, Context)}
             <div className="p-5 mb-4 bg-white rounded-3 shadow" style={{
                 background: "url(/images/ux-design-bkg.png)",
                 backgroundSize: "cover",
@@ -41,7 +40,7 @@ const Courses = () => {
                         <span className="fw-bold">Golden Hill</span> UX Design Course
                     </h1>
                     <p className="col-md-8 fs-4 text-white pb-3">In this course, you'll learn various methods of iterating on a design idea, from wireframing to building a mockup to sharing interactive prototypes.</p>
-                    <button className="btn btn-warning btn-lg" type="button"><PlusCircleFill /> Create New Course</button>
+                    <button className="btn btn-warning btn-lg" type="button"><PlusCircleFill className="bi" /> Create New Course</button>
                 </div>
             </div>
             <Row xs={1} md={2} lg={3} className='g-4'>
@@ -49,14 +48,16 @@ const Courses = () => {
                     <Col key={course.id}>
                         <Card bg='warning' text='dark' className='h-100 border-0 shadow'>
                             <Card.Header 
-                                className='border-bottom-0 d-flex flex-row'>
-                                <div>
-                                    Course
-                                </div>
-                                <div className="ms-auto">
-                                    <ClockFill className="me-2 mb-1" />
-                                    {course.estimatedTime}
-                                </div>
+                                className='border-bottom-0'>
+                                    <div className="opacity-75 d-flex flex-row">
+                                        <div>
+                                            Course
+                                        </div>
+                                        <div className="ms-auto">
+                                            <ClockFill className="me-2 bi" />
+                                            {course.estimatedTime}
+                                        </div>
+                                    </div>
                             </Card.Header>
                             <Card.Body>
                                 <Card.Title className="fw-bold fs-4">{course.title}</Card.Title>

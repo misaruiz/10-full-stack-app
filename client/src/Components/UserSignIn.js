@@ -1,23 +1,70 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import Form from './Form';
 
-export default class UserSignIn extends Component {
+const UserSignIn = (props) => {
 
-  state = {
-    username: '',
-    password: '',
-    errors: [],
-  }
+  // state = {
+  //   username: '',
+  //   password: '',
+  //   errors: [],
+  // }
 
-  render() {
-    const {
-      username,
-      password,
-      errors,
-    } = this.state;
-    console.log(this.state);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState("");
+  let location = useLocation();
+  let navigate = useNavigate();
+//  const [name, setName] = useState("");
+
+    // const {
+    //   username,
+    //   password,
+    //   errors,
+    // } = state;
+    // console.log(state);
+
+    const change = (event) => {     
+      // setName(event.target.name);
+      const value = event.target.value;
+  
+      // setName(value);
+      if (event.target.name === 'username') {
+        setUsername(value);
+      }
+      if (event.target.name === 'password') {
+        setPassword(value);
+      }
+    }
+  
+    const submit = () => {
+      const { context } = props;
+      console.log(props);
+      // const { from } = location.state || { from: { pathname: '/authenticated' } };
+  
+      context.actions.signIn(username, password)
+        .then( user => {
+          if (user === null) {
+            setErrors({ errors: [ 'Sign-in was unsuccessful' ] })
+          } 
+          else {
+            console.log(location);
+            // navigate(location.pathname || '/authenticated');
+            navigate(-1);
+            // props.history.push('/');
+            // navigate('/');
+        }
+        })
+        .catch( error => {
+          console.log(error);
+          navigate('/error');
+        })
+    }
+  
+    const cancel = () => {
+      navigate('/');
+    }
 
     return (
       <main className="container">
@@ -25,9 +72,9 @@ export default class UserSignIn extends Component {
             <Col className='shadow rounded p-5 bg-white'>
               <h1 className='mb-3 fw-bold'>Sign In</h1>
               <Form 
-                cancel={this.cancel}
+                cancel={()=> cancel()}
                 errors={errors}
-                submit={this.submit}
+                submit={()=> submit()}
                 submitButtonText="Sign In"
                 elements={() => (
                   <>
@@ -38,7 +85,7 @@ export default class UserSignIn extends Component {
                         name="username" 
                         type="text"
                         value={username} 
-                        onChange={this.change} 
+                        onChange={(event) => change(event)} 
                         className="form-control" />
                       </div>
                     <div className="mb-3">
@@ -48,7 +95,7 @@ export default class UserSignIn extends Component {
                         name="password"
                         type="password"
                         value={password} 
-                        onChange={this.change} 
+                        onChange={(event) => change(event)} 
                         className="form-control" />                
                     </div>
                   </>
@@ -60,45 +107,6 @@ export default class UserSignIn extends Component {
           </Row>
       </main>
     );
-  }
-
-  change = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    this.setState(() => {
-      return {
-        [name]: value
-      };
-    });
-  }
-
-  submit = () => {
-    const { context } = this.props;
-    console.log(this.props);
-    const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
-    const { username, password } = this.state;
-
-    context.actions.signIn(username, password)
-      .then( user => {
-        if (user === null) {
-          this.setState(() => {
-            return { errors: [ 'Sign-in was unsuccessful' ] };
-          })
-        } 
-        else {
-          this.props.history.push(from);
-          // this.props.history.push('/');
-          // navigate('/');
-      }
-      })
-      .catch( error => {
-        console.log(error);
-        this.props.navigate('/error');
-      })
-  }
-
-  cancel = () => {
-    this.props.navigate('/');
-  }
 }
+
+export default UserSignIn;

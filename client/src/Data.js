@@ -6,13 +6,14 @@ export default class Data {
 
         const options = {
             method,
+            body,
             headers: {
               'Content-Type': 'application/json; charset=utf-8',
             },
         };
 
         if (body !== null) {
-        options.body = JSON.stringify(body);
+          options.body = JSON.stringify(body);
         }
 
         if (requiresAuth) {
@@ -34,6 +35,19 @@ export default class Data {
         else {
           throw new Error();
         }
+    }
+
+    async getCourse(id) {
+      const response = await this.api(`/courses/${id}`, 'GET');
+      if (response.status === 200) {
+        return response.json().then(data => data);
+      }
+      else if (response.status === 401) {
+        return null;
+      }
+      else {
+        throw new Error();
+      }
     }
 
     async getUser(username, password) {
