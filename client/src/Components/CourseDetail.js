@@ -1,18 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-  import { useNavigate, useParams } from "react-router-dom";
-  import { Context } from "../Context";
-  import { Row, Col } from 'react-bootstrap';
-  import { PenFill, TrashFill } from 'react-bootstrap-icons';
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { Context } from "../Context";
+import { Row, Col } from 'react-bootstrap';
+import { PenFill, TrashFill } from 'react-bootstrap-icons';
 
 
 const CourseDetail = () => {
 
-    const { data } = useContext(Context);
+    const { data, username, password, authenticatedUser, actions } = useContext(Context);
     const [ course, setCourse ] = useState({});
     let navigate = useNavigate();
     const { id } = useParams();
-    // const courseId = params.id;
-    // let currentCourse;
 
     // Get courses
     useEffect(() => {
@@ -26,13 +24,17 @@ const CourseDetail = () => {
         });
     }, [data, id, navigate, setCourse]);
 
-    // const {
-    //     title,
-    //     description,
-    //     estimatedTime,
-    //     materialsNeeded
-    // } = course;
-    // const { firstName, lastName } = course.user;
+    const handleDelete = () => {
+        data.deleteCourse(id, username, password)
+            .then((response) => {
+                actions.setShowNotification('Course has been deleted!');
+                navigate(-1);
+                return response;
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    };
 
     return (
         <main className="container">
@@ -42,13 +44,25 @@ const CourseDetail = () => {
                         <div>
                             <p className="text-secondary mb-0">Course</p>
                             <h1 className="fw-bold">{course.title}</h1>
-                            {/* <p className="pb-3">by {course.user.firstName} {course.user.lastName}</p> */}
+                            { course.user
+                                ?   <p className="pb-3">by {course.user.firstName} {course.user.lastName}</p>
+                                :   null
+                            }
                             <p>{course.description}</p>
                         </div>
                         <div className="pt-4">
-                            <button className="btn btn-warning me-2" type="button"><PenFill className="bi" /> Update Course</button>
-                            <button className="btn btn-warning me-2" type="button"><TrashFill className="bi" /> Delete Crouse</button>
-                            <button className="btn btn-light" type="button"> Return to List</button>
+                            {   (course.user) 
+                                    ? (authenticatedUser)
+                                        ? (authenticatedUser.emailAddress === course.user.emailAddress)
+                                            ?   <>
+                                                    <Link to={`/courses/${course.id}/update`} className="btn btn-warning me-2" type="button"><PenFill className="bi" /> Update Course</Link>
+                                                    <button className="btn btn-warning me-2" type="button" onClick={handleDelete}><TrashFill className="bi" /> Delete Crouse</button>
+                                                    <Link to="/" className="btn btn-light" type="button"> Return to List</Link>
+                                                </>
+                                            : <Link to="/" className="btn btn-warning" type="button"> Return to List</Link>
+                                        : <Link to="/" className="btn btn-warning" type="button"> Return to List</Link>
+                                    :   null
+                            }
                         </div>
                     </Col>
                     <Col xs={1} md={4} className="bg-light p-5 rounded-end">

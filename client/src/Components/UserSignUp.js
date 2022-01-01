@@ -1,75 +1,150 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col } from 'react-bootstrap';
-import Form from './Form';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Context } from "../Context";
+import { Row, Col, Form, Button } from 'react-bootstrap';
 
-export default class UserSignUp extends Component {
+const UserSignUp = () => {
 
-  state = {
-    username: '',
-    password: '',
-    errors: [],
-  }
+  const { data, actions } = useContext(Context);
 
-  render() {
-    const {
-      username,
-      password,
-      errors,
-    } = this.state;
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState("");
+  const [validate, setValidate] = useState(false);
+  // console.log(errors.map(err => err.path));
+
+  let navigate = useNavigate();
+
+    // const change = (event) => {     
+    //   const value = event.target.value;
+  
+    //   if (event.target.name === 'firstName') {
+    //     setFirstName(value);
+    //   }
+    //   if (event.target.name === 'lastName') {
+    //     setLastName(value);
+    //   }
+    //   if (event.target.name === 'username') {
+    //     setUsername(value);
+    //   }
+    //   if (event.target.name === 'password') {
+    //     setPassword(value);
+    //   }
+    // }
+  
+    const submit = (e) => {
+      e.preventDefault();
+
+      const body = {
+        firstName,
+        lastName,
+        emailAddress: username,
+        password
+      }
+      console.log(body);
+      
+      data.createUser(body, username, password)
+        .then( response => {
+          if(response) {
+            setErrors(response);
+            setValidate(true);
+          } else {
+            actions.setShowNotification(`Thanks for signing up, ${body.firstName}!`);
+            actions.signIn(username, password);
+            navigate(-1);
+          }
+        })
+        .catch( error => {
+          console.log(error);
+          navigate('/error');
+        })
+    }
+  
+    const cancel = () => {
+      navigate(-1);
+    }
 
     return (
-      <main className="container">
+      <main className="container mb-5">
           <Row xs={1} lg={3} className='justify-content-center'>
             <Col className='shadow rounded p-5 bg-white'>
               <h1 className='mb-3 fw-bold'>Sign Up</h1>
-              <Form 
-                cancel={this.cancel}
-                errors={errors}
-                submit={this.submit}
-                submitButtonText="Sign In"
-                elements={() => (
-                  <>
-                    <div className="mb-3">
-                      <label htmlFor="firstName" className="form-label">First Name</label>
-                      <input 
-                        id="firstName" 
-                        name="firstName" 
-                        type="text"
-                        onChange={this.change} 
-                        className="form-control" />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="lastName" className="form-label">Last Name</label>
-                      <input 
-                        id="lastName" 
-                        name="lastName" 
-                        type="text"
-                        onChange={this.change} 
-                        className="form-control" />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="username" className="form-label">User Name</label>
-                      <input 
-                        id="username" 
-                        name="username" 
-                        type="text"
-                        value={username} 
-                        onChange={this.change} 
-                        className="form-control" />
-                      </div>
-                    <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
-                      <input 
-                        id="password" 
-                        name="password"
-                        type="password"
-                        value={password} 
-                        onChange={this.change} 
-                        className="form-control" />                
-                    </div>
-                  </>
-                )} />
+              <Form noValidate validated={validate} onSubmit={submit}>
+                  <Form.Group className="mb-3" controlId="firstName">
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                      required 
+                      name="firstName" 
+                      type="text"
+                      onChange={ (e)=> setFirstName(e.target.value) }
+                    />
+                      {errors
+                        ? errors.map(err => 
+                            err.path === 'firstName'
+                              ? <Form.Control.Feedback key="1" type="invalid">{err.message}</Form.Control.Feedback>
+                              : null
+                          )
+                        : null
+                      }
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="lastName">
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control 
+                      required
+                      name="lastName" 
+                      type="text"
+                      onChange={ (e)=> setLastName(e.target.value) }
+                    />
+                      {errors
+                        ? errors.map(err => 
+                            err.path === 'lastName'
+                              ? <Form.Control.Feedback key="2" type="invalid">{err.message}</Form.Control.Feedback>
+                              : null
+                          )
+                        : null
+                      }
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="username">
+                    <Form.Label>User Name</Form.Label>
+                    <Form.Control 
+                      required
+                      name="username" 
+                      type="text"
+                      onChange={ (e)=> setUsername(e.target.value) }
+                    />
+                      {errors
+                        ? errors.map(err => 
+                            err.path === 'emailAddress'
+                              ? <Form.Control.Feedback key="3" type="invalid">{err.message}</Form.Control.Feedback>
+                              : null
+                          )
+                        : null
+                      }
+                    </Form.Group>
+                  <Form.Group className="mb-3" controlId="password">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control 
+                      required 
+                      name="password"
+                      type="password"
+                      onChange={ (e)=> setPassword(e.target.value) } 
+                    />
+                      {errors
+                        ? errors.map(err => 
+                            err.path === 'password'
+                              ? <Form.Control.Feedback key="4" type="invalid">{err.message}</Form.Control.Feedback>
+                              : null
+                          )
+                        : null
+                      }                
+                  </Form.Group>
+                  <Form.Group className="pad-bottom">
+                    <Button variant="warning" className="me-2" type="submit">Sign Up</Button>
+                    <Button variant="light" onClick={cancel}>Cancel</Button>
+                  </Form.Group>
+                </Form>
               <p className='mt-4'>
                 Don't have a user account? <br /> <Link to="/signup">Click here</Link> to sign up!
               </p>
@@ -77,40 +152,6 @@ export default class UserSignUp extends Component {
           </Row>
       </main>
     );
-  }
-
-  change = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    this.setState(() => {
-      return {
-        [name]: value
-      };
-    });
-  }
-
-  submit = () => {
-    const { context } = this.props;
-    const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
-    const { username, password } = this.state;
-    context.actions.signIn(username, password)
-      .then( user => {
-        if (user === null) {
-          this.setState(() => {
-            return { errors: [ 'Sign-in was unsuccessful' ] };
-          })
-        } else {
-          this.props.navigate(from);
-      }
-      })
-      .catch( err => {
-        console.log(err);
-        this.props.navigate('/error');
-      })
-  }
-
-  cancel = () => {
-    this.props.navigate('/');
-  }
 }
+
+export default UserSignUp;

@@ -11,23 +11,29 @@ export class Provider extends Component {
     this.data = new Data();
     this.cookie = Cookies.get('authenticatedUser');
     this.state = {
-      authenticatedUser: this.cookie ? JSON.parse(this.cookie) : null
+      authenticatedUser: this.cookie ? JSON.parse(this.cookie) : null,
+      username: '',
+      password: '',
+      showNotification: false,
+      notificationMessage: '',
     };
   }
 
-  // state = {
-  //   authenticatedUser: null
-  // };
-
   render() {
-    const { authenticatedUser } = this.state;
+    const { authenticatedUser, username, password, showNotification, notificationMessage } = this.state;
 
     const value = {
       authenticatedUser,
+      username,
+      password,
+      showNotification,
+      notificationMessage,
       data: this.data,
       actions: {
         signIn: this.signIn,
-        signOut: this.signOut
+        signOut: this.signOut,
+        signUp: this.signUp,
+        setShowNotification: this.setShowNotification
       }
     };
 
@@ -45,6 +51,23 @@ export class Provider extends Component {
       this.setState(() => {
         return {
           authenticatedUser: user,
+          username,
+          password
+        }
+      });
+      Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
+    }
+    return user;
+  }
+
+  signUp = async (body) => {
+    const user = await this.data.createUser(body);
+    if (user !== null) {
+      this.setState(() => {
+        return {
+          authenticatedUser: user,
+          username: body.emailAddress,
+          password: body.password
         }
       });
       Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
@@ -55,6 +78,14 @@ export class Provider extends Component {
   signOut = () => {
     this.setState({ authenticatedUser: null });
     Cookies.remove('authenticatedUser');
+  }
+
+
+  setShowNotification = (message) => {
+    this.setState({ 
+      showNotification: !this.state.showNotification,
+      notificationMessage: message
+    });
   }
 }
 

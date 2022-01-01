@@ -50,6 +50,36 @@ export default class Data {
       }
     }
 
+    async createCourse(body, username, password) {
+      const credentials = { username, password};
+      const response = await this.api(`/courses/`, 'POST', body, true, credentials);
+      if (response.status === 201) {
+        return response.json().then(data => data);
+      }
+      else if (response.status === 400) {
+        return response.json().then(data => data.errors);
+      }
+      else {
+        throw new Error();
+      }
+    }
+
+    async deleteCourse(id, username, password) {
+      const credentials = { username, password};
+      console.log(credentials);
+      const response = await this.api(`/courses/${id}`, 'DELETE', null, true, credentials);
+      console.log(response);
+      if (response.status === 204) {
+        return [];
+      }
+      else if (response.status === 403) {
+        return response.json().then(data => data.errors);
+      }
+      else {
+        throw new Error();
+      }
+    }
+
     async getUser(username, password) {
       const response = await this.api(`/users`, 'GET', null, true, { username, password });
       if (response.status === 200) {
@@ -63,15 +93,13 @@ export default class Data {
       }
     }
 
-    async createUser(user) {
-      const response = await this.api('/users', 'POST', user);
+    async createUser(body) {
+      const response = await this.api('/users', 'POST', body, false, null);
       if (response.status === 201) {
-        return [];
+        return response.json().then(data => data);
       }
       else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
+        return response.json().then(data => data.errors);
       }
       else {
         throw new Error();

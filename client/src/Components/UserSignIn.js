@@ -1,59 +1,40 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import Form from './Form';
 
 const UserSignIn = (props) => {
 
-  // state = {
-  //   username: '',
-  //   password: '',
-  //   errors: [],
-  // }
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
-  let location = useLocation();
   let navigate = useNavigate();
-//  const [name, setName] = useState("");
-
-    // const {
-    //   username,
-    //   password,
-    //   errors,
-    // } = state;
-    // console.log(state);
 
     const change = (event) => {     
-      // setName(event.target.name);
       const value = event.target.value;
   
-      // setName(value);
       if (event.target.name === 'username') {
         setUsername(value);
       }
       if (event.target.name === 'password') {
         setPassword(value);
+        console.log();
       }
     }
+    
   
     const submit = () => {
       const { context } = props;
-      console.log(props);
-      // const { from } = location.state || { from: { pathname: '/authenticated' } };
-  
+      
       context.actions.signIn(username, password)
         .then( user => {
           if (user === null) {
             setErrors({ errors: [ 'Sign-in was unsuccessful' ] })
           } 
           else {
-            console.log(location);
-            // navigate(location.pathname || '/authenticated');
+            setUsername(username);
+            setPassword(password);
             navigate(-1);
-            // props.history.push('/');
-            // navigate('/');
         }
         })
         .catch( error => {
@@ -63,7 +44,7 @@ const UserSignIn = (props) => {
     }
   
     const cancel = () => {
-      navigate('/');
+      navigate(-1);
     }
 
     return (
