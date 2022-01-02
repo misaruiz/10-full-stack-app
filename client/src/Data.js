@@ -17,7 +17,7 @@ export default class Data {
         }
 
         if (requiresAuth) {
-          const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
+          const encodedCredentials = btoa(`${credentials.emailAddress}:${credentials.password}`);
           options.headers['Authorization'] = `Basic ${encodedCredentials}`;
         }
 
@@ -42,16 +42,16 @@ export default class Data {
       if (response.status === 200) {
         return response.json().then(data => data);
       }
-      else if (response.status === 401) {
-        return null;
+      else if (response.status === 400) {
+        return response;
       }
       else {
         throw new Error();
       }
     }
 
-    async createCourse(body, username, password) {
-      const credentials = { username, password};
+    async createCourse(body, emailAddress, password) {
+      const credentials = { emailAddress, password};
       const response = await this.api(`/courses/`, 'POST', body, true, credentials);
       if (response.status === 201) {
         return response.json().then(data => data);
@@ -64,11 +64,26 @@ export default class Data {
       }
     }
 
-    async deleteCourse(id, username, password) {
-      const credentials = { username, password};
-      console.log(credentials);
+    async updateCourse(body, id, emailAddress, password) {
+      const credentials = { emailAddress, password};
+      const response = await this.api(`/courses/${id}`, 'PUT', body, true, credentials);
+      if (response.status === 204) {
+        return response;
+      }
+      else if (response.status === 400) {
+        return response.json().then(data => data.errors);
+      }
+      else if (response.status === 401) {
+        return response.json().then(data => data.errors);
+      }
+      else {
+        throw new Error();
+      }
+    }
+
+    async deleteCourse(id, emailAddress, password) {
+      const credentials = { emailAddress, password};
       const response = await this.api(`/courses/${id}`, 'DELETE', null, true, credentials);
-      console.log(response);
       if (response.status === 204) {
         return [];
       }
@@ -80,8 +95,8 @@ export default class Data {
       }
     }
 
-    async getUser(username, password) {
-      const response = await this.api(`/users`, 'GET', null, true, { username, password });
+    async getUser(emailAddress, password) {
+      const response = await this.api(`/users`, 'GET', null, true, { emailAddress, password });
       if (response.status === 200) {
         return response.json().then(data => data);
       }

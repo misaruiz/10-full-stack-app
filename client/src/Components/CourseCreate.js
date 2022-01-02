@@ -6,7 +6,7 @@ import { PlusCircleFill } from 'react-bootstrap-icons';
 
 const CourseCreate = () => {
 
-  const { data, username, password, authenticatedUser, actions } = useContext(Context);
+  const { data, emailAddress, password, authenticatedUser, actions } = useContext(Context);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -24,7 +24,7 @@ const CourseCreate = () => {
       estimatedTime,
       userId: authenticatedUser.id
     };
-    data.createCourse(body, username, password, authenticatedUser.id)
+    data.createCourse(body, emailAddress, password, authenticatedUser.id)
         .then((response) => {
             actions.setShowNotification('Course has been created!');
             navigate(`/courses/${response.id}`);

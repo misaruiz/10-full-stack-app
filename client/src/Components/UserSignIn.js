@@ -5,7 +5,7 @@ import Form from './Form';
 
 const UserSignIn = (props) => {
 
-  const [username, setUsername] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
   let navigate = useNavigate();
@@ -13,8 +13,8 @@ const UserSignIn = (props) => {
     const change = (event) => {     
       const value = event.target.value;
   
-      if (event.target.name === 'username') {
-        setUsername(value);
+      if (event.target.name === 'emailAddress') {
+        setEmailAddress(value);
       }
       if (event.target.name === 'password') {
         setPassword(value);
@@ -26,13 +26,13 @@ const UserSignIn = (props) => {
     const submit = () => {
       const { context } = props;
       
-      context.actions.signIn(username, password)
+      context.actions.signIn(emailAddress, password)
         .then( user => {
           if (user === null) {
             setErrors({ errors: [ 'Sign-in was unsuccessful' ] })
           } 
           else {
-            setUsername(username);
+            setEmailAddress(emailAddress);
             setPassword(password);
             navigate(-1);
         }
@@ -60,12 +60,12 @@ const UserSignIn = (props) => {
                 elements={() => (
                   <>
                     <div className="mb-3">
-                      <label htmlFor="username" className="form-label">User Name</label>
+                      <label htmlFor="emailAddress" className="form-label">Email Address</label>
                       <input 
-                        id="username" 
-                        name="username" 
+                        id="emailAddress" 
+                        name="emailAddress" 
                         type="text"
-                        value={username} 
+                        value={emailAddress} 
                         onChange={(event) => change(event)} 
                         className="form-control" />
                       </div>

@@ -9,30 +9,13 @@ const UserSignUp = () => {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
   const [validate, setValidate] = useState(false);
   // console.log(errors.map(err => err.path));
 
   let navigate = useNavigate();
-
-    // const change = (event) => {     
-    //   const value = event.target.value;
-  
-    //   if (event.target.name === 'firstName') {
-    //     setFirstName(value);
-    //   }
-    //   if (event.target.name === 'lastName') {
-    //     setLastName(value);
-    //   }
-    //   if (event.target.name === 'username') {
-    //     setUsername(value);
-    //   }
-    //   if (event.target.name === 'password') {
-    //     setPassword(value);
-    //   }
-    // }
   
     const submit = (e) => {
       e.preventDefault();
@@ -40,19 +23,19 @@ const UserSignUp = () => {
       const body = {
         firstName,
         lastName,
-        emailAddress: username,
+        emailAddress,
         password
       }
       console.log(body);
       
-      data.createUser(body, username, password)
+      data.createUser(body, emailAddress, password)
         .then( response => {
           if(response) {
             setErrors(response);
             setValidate(true);
           } else {
             actions.setShowNotification(`Thanks for signing up, ${body.firstName}!`);
-            actions.signIn(username, password);
+            actions.signIn(emailAddress, password);
             navigate(-1);
           }
         })
@@ -106,13 +89,13 @@ const UserSignUp = () => {
                         : null
                       }
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="username">
-                    <Form.Label>User Name</Form.Label>
+                  <Form.Group className="mb-3" controlId="emailAddress">
+                    <Form.Label>Email Address</Form.Label>
                     <Form.Control 
                       required
-                      name="username" 
+                      name="emailAddress" 
                       type="text"
-                      onChange={ (e)=> setUsername(e.target.value) }
+                      onChange={ (e)=> setEmailAddress(e.target.value) }
                     />
                       {errors
                         ? errors.map(err => 

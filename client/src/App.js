@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route,  Navigate } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Header from './Components/Header';
 import Footer from './Components/Footer';
@@ -11,7 +11,11 @@ import UserSignIn from './Components/UserSignIn';
 import UserSignUp from './Components/UserSignUp';
 import UserSignOut from './Components/UserSignOut';
 import Authenticated from './Components/Authenticated';
-import { Context } from "./Context";
+import UnhandledError from './Components/UnhandledError';
+import NotFound from './NotFound';
+import Forbidden from './Components/Forbidden';
+import PrivateRoute from './PrivateRoute';
+
 import withContext from './Context';
 
 const HeaderWithContext = withContext(Header);
@@ -36,37 +40,34 @@ function App() {
           <Route path="/signout" element={<UserSignOutWithContext />} />
 
           <Route path="/courses">
+            <Route index element={<Navigate to="/" />} />
             <Route path=":id">
               <Route index element={<CourseDetailWithContext />} />
               <Route path="update" element={
-                <RequireAuth redirectTo="/signin">
+                <PrivateRoute redirectTo="/forbidden">
                   <CourseUpdateWithContext />
-                </RequireAuth>
+                </PrivateRoute>
               } />
             </Route>
             <Route path="create" element={
-              <RequireAuth redirectTo="/signin">  
+              <PrivateRoute redirectTo="/forbidden">  
                   <CourseCreateWithContext />
-              </ RequireAuth>
+              </ PrivateRoute>
             } />
           </Route>
-
-          
           
           <Route path="/authenticated" element={
-              <RequireAuth redirectTo="/signin">  
+              <PrivateRoute redirectTo="/forbidden">  
                   <AuthWithContext />
-              </ RequireAuth>
+              </ PrivateRoute>
           } />
+          <Route path="/error" element={<UnhandledError />} />
+          <Route path="/forbidden" element={<Forbidden />} />
+          <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </Router>
   );
-}
-
-function RequireAuth({ children, redirectTo }) {
-  const { authenticatedUser } = useContext(Context);
-  return authenticatedUser ? children : <Navigate to={redirectTo} />;
 }
 
 export default App;

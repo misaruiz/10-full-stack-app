@@ -18,6 +18,7 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         emailAddress: user.emailAddress,
+        id: user.id
     })
     .status(200);
 
@@ -27,11 +28,13 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 router.post('/users', asyncHandler(async (req, res) => {
 
   try {
-    await User.create(req.body);
-    res.status(201).location('/').end();
+    const user = await User.create(req.body);
+    res.status(201).location('/').json(user);
   } catch (error) {
+    console.log(error);
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-      const errors = error.errors.map(err => err.message);
+      // const errors = error.errors.map(err =>  err.message);
+      const errors = error.errors;
       res.status(400).json({ errors });   
     } else {
       throw error;
@@ -107,7 +110,7 @@ router.get('/courses/:id', asyncHandler(async(req,res)=>{
 router.post('/courses', authenticateUser, async(req,res)=>{
   try {
     const course = await Course.create(req.body);
-    res.status(201).location(`/courses/${course.id}`).end();
+    res.status(201).location(`/courses/${course.id}`).json(course);
   }
   catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
@@ -137,16 +140,18 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async(req,res)=>{
             id: req.params.id
           }
         });
-      res.status(204).end();
+      res.status(204).json();
       } else {
         res.status(403).json({errors: 'User does not have permission to update this course.'})
       }
     } else {
-      res.status(404).end()
+      res.status(404).json();
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-      const errors = error.errors.map(err => err.message);
+      // const errors = error.errors.map(err => err.message);
+      const errors = error.errors;
+      console.log(req.body);
       res.status(400).json({ errors });   
     } else {
       throw error;
@@ -157,7 +162,6 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async(req,res)=>{
 
 // Route that will delete the corresponding course
 router.delete('/courses/:id', authenticateUser, asyncHandler(async(req,res)=>{
-
   try {
     const course = await Course.findByPk(req.params.id);
     if(course) {

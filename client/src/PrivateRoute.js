@@ -1,24 +1,10 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { Consumer } from './Context';
+import React, { useContext } from 'react';
+import { Navigate } from "react-router-dom";
+import { Context } from './Context';
 
-export default ({ component: Component, ...rest }) => {
-  return (
-    <Consumer>
-      {context => (
-        <Route
-          {...rest}
-          render={props => context.authenticatedUser ? (
-              <Component {...props} />
-            ) : (
-              <Redirect to={{
-                pathname: '/signin',
-                state: { from: props.location }
-              }} />
-            )
-          }
-        />
-    )}
-    </Consumer>
-  );
-};
+function PrivateRoute({ children, redirectTo }) {
+  const { authenticatedUser } = useContext(Context);
+  return authenticatedUser ? children : <Navigate to={redirectTo} />;
+}
+
+export default PrivateRoute;

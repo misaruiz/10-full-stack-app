@@ -1,33 +1,69 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useReducer } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Context } from "../Context";
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import { PlusCircleFill } from 'react-bootstrap-icons';
+
+
 
 const CourseUpdate = () => {
 
-    const { data, username, password, authenticatedUser, actions } = useContext(Context);
+    const { data, emailAddress, password, authenticatedUser, actions } = useContext(Context);
     const [ course, setCourse ] = useState({});
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-	const [materialsNeeded, setMaterialsNeeded] = useState("");
-	const [estimatedTime, setEstimatedTime] = useState("");
+    const [errors, setErrors] = useState("");
+    const [validate, setValidate] = useState(false);
+    // const [title, setTitle] = useState();
+    // const [description, setDescription] = useState();
+	// const [materialsNeeded, setMaterialsNeeded] = useState();
+	// const [estimatedTime, setEstimatedTime] = useState();
 
-  let navigate = useNavigate();
+    let navigate = useNavigate();
 
-  const { id } = useParams();
+    const { id } = useParams();
+
+    let initialState = {
+        title: '',
+        description: '',
+        materialsNeeded: '',
+        estimatedTime: '',
+    }
+
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const onChange = (e) => {
+        dispatch({ field: e.target.name, value: e.target.value})
+    }
+    const { title, description, materialsNeeded, estimatedTime } = state;
 
     // Get courses
     useEffect(() => {
         data.getCourse(id)
         .then((response) => {
-            setCourse(response);
+            if (response.status !== 400) {
+                console.log(response);
+                if (authenticatedUser.emailAddress === response.user.emailAddress) {
+                    for (const key of Object.keys(response)) {
+                        dispatch({ field: key, value: response[key]  })
+                    }
+                } else {
+                    navigate('/forbidden');
+                }
+            } else {
+                navigate('/notfound');
+            }
         })
         .catch((error) => {
             navigate("/error");
             console.log(error);
         });
-    }, [data, id, navigate, setCourse]);
+    }, [data, id, navigate, course, authenticatedUser]);
+    
+    function reducer(state, { field, value}) {
+        return {
+            ...state,
+            [field]: value
+        }
+    }
 
   const submit = (e) => {
     e.preventDefault();
@@ -38,16 +74,24 @@ const CourseUpdate = () => {
       estimatedTime,
       userId: authenticatedUser.id
     };
-    data.createCourse(body, username, password, authenticatedUser.id)
+    data.updateCourse(body, id, emailAddress, password)
         .then((response) => {
-            actions.setShowNotification('Course has been created!');
-            navigate(`/courses/${response.id}`);
+            if (response.length) {
+                if (response[0].type === "Validation error") {
+                    console.log(response[0]);
+                    setErrors(response);
+                    setValidate(true);
+                }
+            } else {
+                actions.setShowNotification('Course has been updated!');
+                navigate(`/courses/${id}`);
+            } 
         })
         .catch((error) => {
             console.log(error);
             navigate("/error");
         })
-};
+    };
 
   const cancel = (e) => {
     e.preventDefault();
@@ -57,61 +101,73 @@ const CourseUpdate = () => {
     return (
         <main className="container">
             <div className="mb-4 bg-white rounded-3 shadow">
-                <form onSubmit={submit}>
+                <Form noValidate validated={validate} onSubmit={submit}>
                     <Row className='gx-0'>
                         <Col xs={1} md={8} className="p-5">
-                            <div className="mb-3">
-                                <label htmlFor="title" className="form-label text-secondary">Course Title</label>
-                                <input 
-                                    id="title" 
+                            <Form.Group className="mb-3" controlId="title">
+                                <Form.Label className="text-secondary">Course Title</Form.Label>
+                                <Form.Control 
+                                    required 
                                     name="title" 
                                     type="text"
-                                    value={course.title}
-                                    onChange={ (e)=> setTitle(e.target.value) } 
-                                    className="form-control form-control-lg fw-bold fs-1" />
-                            </div>
+                                    value={title}
+                                    onChange={onChange} 
+                                    className="form-control-lg fw-bold fs-1" />
+                                    {errors
+                                        ? errors.map(err => 
+                                            err.path === 'title'
+                                            ? <Form.Control.Feedback key="1" type="invalid">{err.message}</Form.Control.Feedback>
+                                            : null
+                                        )
+                                        : null
+                                    }
+                            </Form.Group>
                             <p className="pb-3">by {`${authenticatedUser.firstName} ${authenticatedUser.lastName}`}</p>
-                            <div className="mb-3">
-                                <label htmlFor="description" className="form-label text-secondary">Course Description</label>
-                                <textarea 
-                                    id="description" 
+                            <Form.Group className="mb-3" controlId="description">
+                                <Form.Label className="text-secondary">Course Description</Form.Label>
+                                <Form.Control 
+                                    required 
                                     name="description"
-                                    value={course.description}
-                                    onChange={ (e)=> setDescription(e.target.value) } 
-                                    className="form-control"
-                                    style={{height: '200px'}} >
-                                </textarea>              
-                                </div>
+                                    as="textarea"
+                                    value={description}
+                                    onChange={onChange} 
+                                    style={{height: '200px'}} />
+                                    {errors
+                                        ? errors.map(err => 
+                                            err.path === 'description'
+                                            ? <Form.Control.Feedback key="1" type="invalid">{err.message}</Form.Control.Feedback>
+                                            : null
+                                        )
+                                        : null
+                                    }
+                            </Form.Group>
                             <div className="pt-4">
-                                <button className="btn btn-warning me-2" type="submit"><PlusCircleFill className='bi' /> Update Course</button>
-                                <button className="btn btn-light" type="button" onClick={cancel}>Cancel</button>
+                                <Button variant="warning" className="me-2" type="submit"><PlusCircleFill className='bi' /> Update Course</Button>
+                                <Button variant="light" type="button" onClick={cancel}>Cancel</Button>
                             </div>
                         </Col>
                         <Col xs={1} md={4} className="bg-light p-5 rounded-end">
-                            <div className="mb-3">
-                                <label htmlFor="estimatedTime" className="form-label text-secondary">Estimated Time</label>
-                                <input 
-                                    id="estimatedTime" 
+                            <Form.Group className="mb-3" controlId="estimatedTime">
+                                <Form.Label className="text-secondary">Estimated Time</Form.Label>
+                                <Form.Control 
                                     name="estimatedTime" 
                                     type="text"
-                                    value={course.estimatedTime}
-                                    onChange={ (e)=> setEstimatedTime(e.target.value) } 
+                                    value={estimatedTime}
+                                    onChange={onChange} 
                                     className="form-control" />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="materialsNeeded" className="form-label text-secondary">Materials Needed</label>
-                                <textarea 
-                                    id="materialsNeeded" 
+                            </Form.Group>
+                            <Form.Group className="mb-3" controlId="materialsNeeded">
+                                <Form.Label className="text-secondary">What You'll Learn</Form.Label>
+                                <Form.Control 
                                     name="materialsNeeded"
-                                    value={course.materialsNeeded}
-                                    onChange={ (e)=> setMaterialsNeeded(e.target.value) } 
-                                    className="form-control"
-                                    style={{height: '200px'}} >
-                                </textarea>              
-                            </div>
+                                    as="textarea"
+                                    value={materialsNeeded}
+                                    onChange={onChange} 
+                                    style={{height: '200px'}} />
+                            </Form.Group>
                         </Col>
                     </Row>
-                </form>
+                </Form>
         </div>
       </main>
     );
