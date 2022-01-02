@@ -6,7 +6,7 @@ import { PlusCircleFill } from 'react-bootstrap-icons';
 
 const CourseUpdate = () => {
 
-    const { data, emailAddress, password, authenticatedUser, actions } = useContext(Context);
+    const { data, authenticatedUser, actions } = useContext(Context);
 
     const [errors, setErrors] = useState("");
     const [validate, setValidate] = useState(false);
@@ -66,8 +66,9 @@ const CourseUpdate = () => {
             estimatedTime,
             userId: authenticatedUser.id
         };
-    data.updateCourse(body, id, emailAddress, password)
+    data.updateCourse(body, id, authenticatedUser.emailAddress, authenticatedUser.password)
         .then((response) => {
+            console.log(response);
             if (response.length) {
                 if (response[0].type === "Validation error")  {
                     setErrors(response);

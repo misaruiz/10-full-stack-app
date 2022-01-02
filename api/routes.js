@@ -154,6 +154,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async(req,res)=>{
       console.log(req.body);
       res.status(400).json({ errors });   
     } else {
+      console.log(error);
       throw error;
     }
   }

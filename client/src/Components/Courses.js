@@ -40,10 +40,6 @@ const Courses = () => {
                         <span className="fw-bold">Golden Hill</span> UX Design Track
                     </h1>
                     <p className="col-md-8 fs-4 text-white pb-3">In this track, you'll learn various methods of iterating on a design idea, from wireframing to building a mockup to sharing interactive prototypes.</p>
-                    {/* {authenticatedUser
-                        ?   <Link to="/courses/create" className="btn btn-warning btn-lg" type="button"><PlusCircleFill className="bi" /> Create New Course</Link>
-                        :   <Link to="/signin" className="btn btn-warning btn-lg" type="button">Sign In to Create Course</Link>
-                    } */}
                     <Link to="/courses/create" className="btn btn-warning btn-lg" type="button"><PlusCircleFill className="bi" /> Create New Course</Link>
                 </div>
             </div>

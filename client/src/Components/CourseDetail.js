@@ -8,7 +8,7 @@ import { PenFill, TrashFill } from 'react-bootstrap-icons';
 
 const CourseDetail = () => {
 
-    const { data, emailAddress, password, authenticatedUser, actions } = useContext(Context);
+    const { data, authenticatedUser, actions } = useContext(Context);
     const [ course, setCourse ] = useState({});
     let navigate = useNavigate();
     const { id } = useParams();
@@ -30,7 +30,7 @@ const CourseDetail = () => {
     }, [data, id, navigate, setCourse]);
 
     const handleDelete = () => {
-        data.deleteCourse(id, emailAddress, password)
+        data.deleteCourse(id, authenticatedUser.emailAddress, authenticatedUser.password)
             .then((response) => {
                 actions.setShowNotification('Course has been deleted!');
                 navigate('/');

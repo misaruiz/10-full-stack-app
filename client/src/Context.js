@@ -13,19 +13,17 @@ export class Provider extends Component {
     this.state = {
       authenticatedUser: this.cookie ? JSON.parse(this.cookie) : null,
       emailAddress: '',
-      password: '',
       showNotification: false,
       notificationMessage: '',
     };
   }
 
   render() {
-    const { authenticatedUser, emailAddress, password, showNotification, notificationMessage } = this.state;
+    const { authenticatedUser, emailAddress, showNotification, notificationMessage } = this.state;
 
     const value = {
       authenticatedUser,
       emailAddress,
-      password,
       showNotification,
       notificationMessage,
       data: this.data,
@@ -47,12 +45,12 @@ export class Provider extends Component {
   
   signIn = async (emailAddress, password) => {
     const user = await this.data.getUser(emailAddress, password);
+    user.password = password;
     if (user !== null) {
       this.setState(() => {
         return {
           authenticatedUser: user,
           emailAddress,
-          password
         }
       });
       Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
@@ -63,11 +61,11 @@ export class Provider extends Component {
   signUp = async (body) => {
     const user = await this.data.createUser(body);
     if (user !== null) {
+      user.password = body.password;
       this.setState(() => {
         return {
           authenticatedUser: user,
           emailAddress: body.emailAddress,
-          password: body.password
         }
       });
       Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
