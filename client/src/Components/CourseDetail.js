@@ -33,7 +33,7 @@ const CourseDetail = () => {
         data.deleteCourse(id, emailAddress, password)
             .then((response) => {
                 actions.setShowNotification('Course has been deleted!');
-                navigate(-1);
+                navigate('/');
                 return response;
             })
             .catch((error) => {

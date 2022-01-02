@@ -4,18 +4,12 @@ import { Context } from "../Context";
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { PlusCircleFill } from 'react-bootstrap-icons';
 
-
-
 const CourseUpdate = () => {
 
     const { data, emailAddress, password, authenticatedUser, actions } = useContext(Context);
-    const [ course, setCourse ] = useState({});
+
     const [errors, setErrors] = useState("");
     const [validate, setValidate] = useState(false);
-    // const [title, setTitle] = useState();
-    // const [description, setDescription] = useState();
-	// const [materialsNeeded, setMaterialsNeeded] = useState();
-	// const [estimatedTime, setEstimatedTime] = useState();
 
     let navigate = useNavigate();
 
@@ -27,8 +21,6 @@ const CourseUpdate = () => {
         materialsNeeded: '',
         estimatedTime: '',
     }
-
-
     const [state, dispatch] = useReducer(reducer, initialState);
     const onChange = (e) => {
         dispatch({ field: e.target.name, value: e.target.value})
@@ -56,29 +48,28 @@ const CourseUpdate = () => {
             navigate("/error");
             console.log(error);
         });
-    }, [data, id, navigate, course, authenticatedUser]);
+    }, [data, id, navigate, authenticatedUser]);
     
-    function reducer(state, { field, value}) {
+    function reducer(state, { field, value }) {
         return {
             ...state,
             [field]: value
         }
     }
 
-  const submit = (e) => {
-    e.preventDefault();
-    const body = {
-      title,
-      description,
-      materialsNeeded,
-      estimatedTime,
-      userId: authenticatedUser.id
-    };
+    const submit = (e) => {
+        e.preventDefault();
+        const body = {
+            title,
+            description,
+            materialsNeeded,
+            estimatedTime,
+            userId: authenticatedUser.id
+        };
     data.updateCourse(body, id, emailAddress, password)
         .then((response) => {
             if (response.length) {
-                if (response[0].type === "Validation error") {
-                    console.log(response[0]);
+                if (response[0].type === "Validation error")  {
                     setErrors(response);
                     setValidate(true);
                 }
@@ -93,10 +84,10 @@ const CourseUpdate = () => {
         })
     };
 
-  const cancel = (e) => {
-    e.preventDefault();
-    navigate(`/courses/${id}`);
-  }
+    const cancel = (e) => {
+        e.preventDefault();
+        navigate(`/courses/${id}`);
+    }
 
     return (
         <main className="container">
@@ -135,7 +126,7 @@ const CourseUpdate = () => {
                                     {errors
                                         ? errors.map(err => 
                                             err.path === 'description'
-                                            ? <Form.Control.Feedback key="1" type="invalid">{err.message}</Form.Control.Feedback>
+                                            ? <Form.Control.Feedback key="7" type="invalid">{err.message}</Form.Control.Feedback>
                                             : null
                                         )
                                         : null
@@ -154,7 +145,7 @@ const CourseUpdate = () => {
                                     type="text"
                                     value={estimatedTime}
                                     onChange={onChange} 
-                                    className="form-control" />
+                                />
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="materialsNeeded">
                                 <Form.Label className="text-secondary">What You'll Learn</Form.Label>
@@ -168,12 +159,9 @@ const CourseUpdate = () => {
                         </Col>
                     </Row>
                 </Form>
-        </div>
-      </main>
+            </div>
+        </main>
     );
-
-
-  
 }
 
 export default CourseUpdate;

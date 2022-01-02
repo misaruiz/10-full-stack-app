@@ -11,7 +11,7 @@ import React, {
 
 const Courses = () => {
 
-    const { data, authenticatedUser } = useContext(Context);
+    const { data } = useContext(Context);
     const [ courses, setCourses ] = useState([]);
     let navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const Courses = () => {
             setCourses(response);
         })
         .catch((error) => {
-            navigate.push("/error");
+            navigate("/error");
             console.log(error);
         });
     }, [data, navigate]);
@@ -40,11 +40,11 @@ const Courses = () => {
                         <span className="fw-bold">Golden Hill</span> UX Design Track
                     </h1>
                     <p className="col-md-8 fs-4 text-white pb-3">In this track, you'll learn various methods of iterating on a design idea, from wireframing to building a mockup to sharing interactive prototypes.</p>
-                    {authenticatedUser
+                    {/* {authenticatedUser
                         ?   <Link to="/courses/create" className="btn btn-warning btn-lg" type="button"><PlusCircleFill className="bi" /> Create New Course</Link>
                         :   <Link to="/signin" className="btn btn-warning btn-lg" type="button">Sign In to Create Course</Link>
-                    }
-                    
+                    } */}
+                    <Link to="/courses/create" className="btn btn-warning btn-lg" type="button"><PlusCircleFill className="bi" /> Create New Course</Link>
                 </div>
             </div>
             <Row xs={1} md={2} lg={3} className='g-4'>

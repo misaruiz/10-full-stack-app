@@ -50,7 +50,7 @@ function App() {
               } />
             </Route>
             <Route path="create" element={
-              <PrivateRoute redirectTo="/forbidden">  
+              <PrivateRoute redirectTo="/signin">  
                   <CourseCreateWithContext />
               </ PrivateRoute>
             } />

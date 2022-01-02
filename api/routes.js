@@ -47,7 +47,6 @@ router.post('/users', asyncHandler(async (req, res) => {
 // COURSE ROUTES
 // Route that returns all courses including the User associated with each course
 router.get('/courses', asyncHandler(async(req,res)=>{
-
   const courses = await Course.findAll({
     attributes: {
       exclude: [
@@ -114,8 +113,9 @@ router.post('/courses', authenticateUser, async(req,res)=>{
   }
   catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-      const errors = error.errors.map(err => err.message);
-      res.status(400).json({ errors });   
+      // const errors = error.errors.map(err => err.message);
+      const errors = error.errors;
+      res.status(400).json({errors});   
     } else {
       throw error;
     }

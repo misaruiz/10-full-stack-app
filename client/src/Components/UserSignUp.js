@@ -11,9 +11,8 @@ const UserSignUp = () => {
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState([]);
   const [validate, setValidate] = useState(false);
-  // console.log(errors.map(err => err.path));
 
   let navigate = useNavigate();
   
@@ -26,11 +25,10 @@ const UserSignUp = () => {
         emailAddress,
         password
       }
-      console.log(body);
       
       data.createUser(body, emailAddress, password)
         .then( response => {
-          if(response) {
+          if(response.length) {
             setErrors(response);
             setValidate(true);
           } else {
@@ -129,7 +127,7 @@ const UserSignUp = () => {
                   </Form.Group>
                 </Form>
               <p className='mt-4'>
-                Don't have a user account? <br /> <Link to="/signup">Click here</Link> to sign up!
+                Already have an account? <Link to="/signin">Sign In!</Link>
               </p>
             </Col>
           </Row>
