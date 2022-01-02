@@ -12,9 +12,9 @@ import UserSignUp from './Components/UserSignUp';
 import UserSignOut from './Components/UserSignOut';
 import Authenticated from './Components/Authenticated';
 import UnhandledError from './Components/UnhandledError';
-import NotFound from './NotFound';
+import NotFound from './Components/NotFound';
 import Forbidden from './Components/Forbidden';
-import PrivateRoute from './PrivateRoute';
+import PrivateRoute from './Components/PrivateRoute';
 
 import withContext from './Context';
 
@@ -63,7 +63,8 @@ function App() {
           } />
           <Route path="/error" element={<UnhandledError />} />
           <Route path="/forbidden" element={<Forbidden />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/notfound" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/notfound" />} />
       </Routes>
       <Footer />
     </Router>
